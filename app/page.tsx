@@ -12,17 +12,25 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full flex">
-      {/* Mitad izquierda: Kjarkas */}
+      {/* Izquierda: Kjarkas */}
       <div
-        className="w-1/2 flex items-center justify-center bg-white border-r-4 border-black cursor-pointer"
+        className="w-1/3 flex items-center justify-center bg-white border-r-4 border-black cursor-pointer"
         onClick={() => handleDownload('kjarkas.bat')}
         style={{ minHeight: '100vh' }}
       >
         <h1 className="text-6xl font-bold text-black select-none">Kjarkas</h1>
       </div>
-      {/* Mitad derecha: Kjarkas Quedate */}
+      {/* Centro: Incos */}
       <div
-        className="w-1/2 flex items-center justify-center bg-white border-l-4 border-black cursor-pointer"
+        className="w-1/3 flex items-center justify-center bg-white border-r-4 border-black border-l-4 cursor-pointer"
+        onClick={() => handleDownload('incos.bat')}
+        style={{ minHeight: '100vh' }}
+      >
+        <h1 className="text-6xl font-bold text-black select-none">Incos</h1>
+      </div>
+      {/* Derecha: Kjarkas Quedate */}
+      <div
+        className="w-1/3 flex items-center justify-center bg-white border-l-4 border-black cursor-pointer"
         onClick={() => handleDownload('kjarkas-quedate.bat')}
         style={{ minHeight: '100vh' }}
       >
