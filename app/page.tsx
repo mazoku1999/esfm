@@ -12,29 +12,21 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full flex">
-      {/* Izquierda: Kjarkas */}
+      {/* Izquierda: Kjarkas (descarga kjarkas-quedate.bat) */}
       <div
-        className="w-1/3 flex items-center justify-center bg-white border-r-4 border-black cursor-pointer"
-        onClick={() => handleDownload('kjarkas.bat')}
+        className="w-1/2 flex items-center justify-center bg-white border-r-4 border-black cursor-pointer"
+        onClick={() => handleDownload('kjarkas-quedate.bat')}
         style={{ minHeight: '100vh' }}
       >
         <h1 className="text-5xl font-bold text-black select-none">Kjarkas</h1>
       </div>
-      {/* Centro: Supremo Invisible */}
+      {/* Derecha: Pacman */}
       <div
-        className="w-1/3 flex items-center justify-center bg-white border-r-4 border-black cursor-pointer"
-        onClick={() => handleDownload('supremo_invisible.bat')}
+        className="w-1/2 flex items-center justify-center bg-white cursor-pointer"
+        onClick={() => handleDownload('pacman.bat')}
         style={{ minHeight: '100vh' }}
       >
-        <h1 className="text-5xl font-bold text-black select-none">Supremo Invisible</h1>
-      </div>
-      {/* Derecha: Kjarkas Quedate */}
-      <div
-        className="w-1/3 flex items-center justify-center bg-white cursor-pointer"
-        onClick={() => handleDownload('kjarkas-quedate.bat')}
-        style={{ minHeight: '100vh' }}
-      >
-        <h1 className="text-5xl font-bold text-black select-none">Kjarkas Quedate</h1>
+        <h1 className="text-5xl font-bold text-black select-none">Pacman</h1>
       </div>
     </div>
   )
