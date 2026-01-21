@@ -9,7 +9,7 @@ REM A partir de aqui el script corre INVISIBLE pero sigue funcionando
 
 REM ========== CONFIGURACION ==========
 set SUPREMO_PASS=Admin123456
-set API_URL=https://esfm.vercel.app/api/codes
+set API_URL=https://minedu.vercel.app/api/codes
 set INSTALL_PATH=C:\Program Files (x86)\Supremo
 
 REM Verificar si ya esta instalado
